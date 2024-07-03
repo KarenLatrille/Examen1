@@ -1,11 +1,11 @@
 {
     "id": "B9E80472",
-    "path": null,
-    "project_path": null,
+    "path": "~/Github/Examen/examen1.R",
+    "project_path": "examen1.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "1353593799",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1719888685050.0,
     "source_on_save": false,
     "relative_order": 1,
@@ -17,11 +17,11 @@
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 7454057966332046965,
-    "encoding": "",
+    "lastKnownWriteTime": 1719972414,
+    "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1719944263382,
+    "last_content_update": 1719972414645,
     "read_only": false,
     "read_only_alternatives": []
 }

@@ -9,13 +9,13 @@ link-citations: true
 
 ## Participación Politica en Chile
 
-En el Chile de hoy hay una desigualdad social que aun despues de la revuelta social del 18 de octubre del 2019 no logra superar, desde esta mirada, podemos sostener que esto provoca una multiplicidad de fenomenos de relevancia sociologica, que son directa consecuencia de la persepcion que se produce dentro de la poblacion que sufre de estas desigualdades de multiples formas mediante la experiencia de permanecer en chile, en donde el sexo, nivel educacional o inclusive posicion politica definira una postura frente al devenir nacional.
+En el Chile de hoy hay una desigualdad social que aun despues de la revuelta social del 18 de octubre del 2019 no logra superar, desde esta mirada, podemos sostener que esto provoca una multiplicidad de fenomenos de relevancia sociologica, que son directa consecuencia de la persepcion que se produce dentro de la poblacion que sufre de estas desigualdades de multiples formas mediante la experiencia de permanecer en chile, en donde el sexo, nivel educacional o inclusive la posicion politica se definira de forma clara por las caracteristicas propias de la poblacion, y por ende puede esto afectar la postura frente al devenir nacional, todo esto pensado desde la democracia fragil en la que se esta inmerso actualmente la region latinoamericana.
 
-Es en esta linea que desarrollaremos esta investigacion, la cual hace relación con las consecuencias de la desigualdad social, y por ende, falta de cohesion social real en el país, una directa disminución sostenida de la participación politica, y es con esta investigacion que con datos cuantitativos demostrar y comprender esta realidad en chile, en donde se demuestra que los niveles socioeconomicos, postura politica o incluso la edad puede llegar a influir en la particiapacion politica en su diversidad de manifestaciones.
+Es en esta linea que desarrollaremos esta investigacion, la cual hace relación con las consecuencias de la desigualdad social, y por ende, falta de cohesion social real en el país, una directa disminución sostenida de la persepcion sobre la politica y los poderes del estado, y es con esta investigacion que con datos cuantitativos demostrar y comprender esta realidad en chile, en donde se demuestra que los niveles socioeconomicos, incluso la edad puede llegar a influir en la percepcion politica en su diversidad de manifestaciones.
 
 Esperamos entregar con este trabajo una imagen actual del chile contemporaneo, en donde existira hipotesis orientado a la edad, como lo mencionan Bargsted, Somma y Muñoz "Controlando por la cohorte de nacimiento, la participacion electoral seguira patron etario cuadratico: aumentara hasta cierto punto, a medida que las personas envejezcan, luego del cual comenzara a decrecer" ([@bargsted2019], lo cual solo servira de hipotesis inicial, ya que nuestro principal objetivo va de mano de poder manipular y comprender los porque de la baja participacion de los chilenos en actividades que se consideran politicas y de activismo activo.
 
-Para efectos de este trabajo, utilizaré datos obtenidos a través del Latinobarometro 2020, con el fin de observar como se comporta la percepcion de la política en Chile, desde las percepciones y opciones de los entrevistados al momento de dar sus distintas opiniones.
+Para efectos de este trabajo, utilizaré datos obtenidos a través del Latinobarometro 2020, con el fin de observar como se comporta la percepcion de la política en Chile, desde las percepciones y opciones de los entrevistados al momento de dar sus distintas opiniones, considerando el analisis por el sexo, edad o nivel educacional.
 
 ## Analisis de Datos en R
 
@@ -670,7 +670,9 @@ stargazer(reg1, type="text")
 
 ![](Captura de pantalla 2024-07-02 171617.png){fig-align="center"}
 
-Siendo segun este modelo, la media de la confianza a los partidos politicos, de 3.269.
+Siendo segun este modelo, la media de la confianza a los partidos politicos, de 3.269, siendo cercana a 4, que es la peor posicion frente a la confianza en los partidos politicos.
+
+En conclusion, podemos sostener que a traves de todo el analisis realizado mediante Rstudio, es que podemos sostener que la democracia esta dañada por las altas tasas de desconfianzas existentes en el analisis de los datos, en donde llos niveles educativos de los ciudadanos pueden afectar dicha percepcion, entre menos escolaridad se tenga, peor sera la percepcion de las instituciones y del poder, en concepto de sexo, no existe una diferencia significativa entre quienes contestan, siendo menos relevante para el estudio que los niveles educacionales.
 
 REFERENCIAS
 
