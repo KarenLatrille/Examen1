@@ -1,0 +1,198 @@
+---
+title: "Participación politica en Chile"
+author: "Karen Latrille"
+format: html
+editor: visual
+bibliography: Examen.bib
+link-citations: true
+---
+
+## Participación Politica en Chile
+
+En el Chile de hoy hay una desigualdad social que aun despues de la revuelta social del 18 de octubre del 2019 no logra superar, desde esta mirada, podemos sostener que esto provoca una multiplicidad de fenomenos de relevancia sociologica, que son directa consecuencia de la persepcion que se produce dentro de la poblacion que sufre de estas desigualdades de multiples formas mediante la experiencia de permanecer en chile, en donde el sexo, nivel educacional o inclusive posicion politica definira una postura frente al devenir nacional.
+
+Es en esta linea que desarrollaremos esta investigacion, la cual hace relación con las consecuencias de la desigualdad social, y por ende, falta de cohesion social real en el país, una directa disminución sostenida de la participación politica, y es con esta investigacion que con datos cuantitativos demostrar y comprender esta realidad en chile, en donde se demuestra que los niveles socioeconomicos, postura politica o incluso la edad puede llegar a influir en la particiapacion politica en su diversidad de manifestaciones.
+
+Esperamos entregar con este trabajo una imagen actual del chile contemporaneo, en donde existira hipotesis orientado a la edad, como lo mencionan Bargsted, Somma y Muñoz "Controlando por la cohorte de nacimiento, la participacion electoral seguira patron etario cuadratico: aumentara hasta cierto punto, a medida que las personas envejezcan, luego del cual comenzara a decrecer" ([@bargsted2019], lo cual solo servira de hipotesis inicial, ya que nuestro principal objetivo va de mano de poder manipular y comprender los porque de la baja participacion de los chilenos en actividades que se consideran politicas y de activismo activo.
+
+Para efectos de este trabajo, utilizaré datos obtenidos a través del Latinobarometro 2020, con el fin de observar como se comporta la participación política en Chile, desde las percepciones y opciones de los entrevistados al momento de dar sus distintas opiniones.
+
+## Analisis de Datos en R
+
+Ajustes iniciales:
+
+```{##Ajustes Iniciales}
+rm(list=ls())
+options(scipen=999)
+```
+
+Carga de Paquetes
+
+```{pacman::p_load(sjlabelled,}
+               dplyr, # Manipulacion de datos
+               stargazer, # Tablas
+               sjmisc, # Tablas
+               summarytools, # Tablas
+               kableExtra, # Tablas
+               sjPlot, # Tablas y gráficos
+               corrplot, # Correlaciones
+               sessioninfo, # Información de la sesión de trabajo
+               ggplot2, # Para la mayoría de los gráficos
+               GGally,
+               car,
+               texreg,
+               sjlabelled, 
+               fastDummies, 
+               ggeffects)
+```
+
+Carga de base de datos (1)
+
+```{#cargamos la base de datos desde internet}
+load(url("https://github.com/Kevin-carrasco/metod1-MCS/raw/main/files/data/external_data/latinobarometro2020.RData"))
+
+View(latinobarometro2020)
+names(latinobarometro2020)
+```
+
+```         
+ [1] "numinves"    "idenpa"      "numentre"   
+ [4] "reg"         "ciudad"      "tamciud"     
+ [7] "comdist"     "edad"        "sexo"         
+ [10] "codigo"      "diareal"     "mesreal"      
+ [13] "ini"         "fin"         "dura"        
+ [16] "totrevi"     "totcuot"     "totrech"      
+ [19] "totperd"     "numcasa"     "codsuper"    
+ [22] "supervvi"    "superven"    "codif"        
+ [25] "digit"       "p1st"        "p2st"         
+ [28] "p3stgbs"     "p4stgbs"     "p5stgbs"     
+ [31] "p6st"        "p7stgbs"     "p8st_a"       
+ [34] "p8st_b"      "p8st_c"      "p9stgbs"      
+ [37] "p10stgbs"    "P11STGBS_A"  "P11STGBS_B"   
+ [40] "p12st"       "P13STGBS_A"  "P13STGBS_B"   
+ [43] "p13st_c"     "p13st_d"     "p13st_e"      
+ [46] "p13st_f"     "p13st_g"     "p13st_h"      
+ [49] "p13st_i"     "p14gbs"      "p15st_a"      
+ [52] "p15st_b"     "p15st_c"     "p15st_d"      
+ [55] "p15st_e"     "p15st_f"     "p15st_g"      
+ [58] "p15n_h"      "p15n_i"      "p15n_j"       
+ [61] "p15n_k"      "P16N_A_01"   "P16N_A_02"    
+ [64] "P16N_A_03"   "P16N_A_04"   "P16N_A_05"    
+ [67] "P16N_A_06"   "P16N_A_07"   "P16N_A_08"   
+ [70] "P16N_A_09"   "P16N_A_10"   "P16N_A_11"   
+ [73] "P16N_A_12"   "P16N_A_13"   "P16N_A_14"    
+ [76] "P16N_A_15"   "P16N_A_16"   "P16N_B_01"   
+ [79] "P16N_B_02"   "P16N_B_03"   "P16N_B_04"    
+ [82] "P16N_B_05"   "P16N_B_06"   "P16N_B_07"    
+ [85] "P16N_B_08"   "P16N_B_09"   "P16N_B_10"    
+ [88] "P16N_B_11"   "P16N_B_12"   "P16N_B_13"    
+ [91] "P16N_B_14"   "P16N_B_15"   "P16N_B_16"    
+ [94] "p17stgbs"    "p18st"       "p19st_a"      
+ [97] "p19n_b"      "p19n_c"      "p19n_d"      
+ [100] "p20st_a"     "p22stm_b"    "p20stm_c"    
+ [103] "p20stm_d"    "p20st_e"     "p20st_f"     
+ [106] "p20st_g"     "p21stm"      "p22st_a"     
+ [109] "p22st_b"     "p22st_c"     "p22st_d"     
+ [112] "p23n_01"     "p23n_02"     "p23n_03"     
+ [115] "p23n_04"     "p23n_05"     "p23n_06"     
+ [118] "p23n_07"     "p23n_08"     "p23n_09"     
+ [121] "p23n_10"     "p24st_a"     "p24st_b"     
+ [124] "p24st_c"     "p25n"        "p26n_a"      
+ [127] "p26n_b"      "p27n"        "p28st"       [130] "p29st_a"     "p29st_b"     "p29st_c"     [133] "p29st_d"     "p29n_e"      "p29st_f"     [136] "p29st_g"     "p30st_a"     "p30st_b"     [139] "p30st_c"     "p30st_d"     "p30st_e"     [142] "p30n"        "p31st_a"     "p31st_b"     [145] "p31st_c"     "p31st_d"     "p31stm_e"    [148] "p32na"       "p32n_b"      "p33n"        [151] "p34n"        "p35n_a"      "p35n_b"      [154] "p36n_a"      "p36n_b"      "p36stm_a"    [157] "p36stm_b"    "p36stm_c"    "p36stm_d"    [160] "P36STMB_A"   "P36STMB_B"   "P36STMB_C"   [163] "P36STMB_D"   "p37n_a"      "p37n_b"      [166] "p37n_c"      "p37n_d"      "p38n"        [169] "p39n_a"      "p39st_b"     "p39n_c"      [172] "p39n_d"      "p39n_e"      "p39n_f"      [175] "p39n_g"      "p39n_h"      "p40n"        [178] "p41n"        "p42n"        "p43n"        [181] "p44n"        "p45n"        "p46stgbs"    [184] "p47st_a"     "p47st_b"     "p47st_c"     [187] "p47st_d"     "p47st_e"     "p47st_f"     [190] "p47st_g"     "p47st_h"     "p47st_i"     [193] "p47st_j"     "p47st_k"     "p47st_l"     [196] "p47st_m"     "p48st_1"     "p48st_2"     [199] "p48st_3"     "p49stgbs"    "P50STGBS_A"  [202] "P51STGBS_B"  "p52st"       "p53n"        [205] "p54st_a"     "p54st_b"     "p54st_c"     [208] "p54st_d"     "p55st_a"     "p55st_b"     [211] "p55st_c"     "p55st_d"     "p55st_e"     [214] "p55st_f"     "p56n"        "p57st"       [217] "p58st"       "p59st_a"     "p59st_b"     [220] "p59n_c"      "p59st_d"     "p59n_e"      [223] "p59n_f"      "p60st"       "p60n_b"      [226] "p60n_c"      "p61st"       "p62n_a"      [229] "p62st_b"     "p62st_c"     "p62st_d"     [232] "p63st_01"    "p63st_02"    "p63st_03"    [235] "p63st_04"    "p63st_05"    "p63st_06"    [238] "p63st_07"    "p63st_08"    "p63st_09"    [241] "p64st"       "p65st"       "p66npn"      [244] "p67npn_a"    "P67NPN_B_01" "P67NPN_B_02" [247] "P67NPN_B_03" "P67NPN_B_04" "P67NPN_B_05" [250] "P67NPN_B_06" "p68st"       "p69st"       [253] "p70st"       "P71STM_01"   "P71STM_02"   [256] "P71STM_03"   "P71STM_04"   "P71STM_05"   [259] "P71STM_06"   "P71STM_07"   "P71STM_08"   [262] "P71STM_09"   "P71STM_10"   "P71STM_11"   [265] "p72npn"      "p73npn_1"    "p73npn_2"    [268] "p73npn_3"    "p73npn_4"    "p73npn_5"    [271] "p74npn_1"    "p74npn_2"    "p74npn_3"    [274] "p74npn_4"    "p74npn_5"    "P75NPN_01"   [277] "P75NPN_02"   "P75NPN_03"   "P75NPN_04"   [280] "P75NPN_05"   "P75NPN_06"   "P75NPN_07"   [283] "P75NPN_08"   "P75NPN_09"   "P75NPN_10"   [286] "P75NPN_11"   "P75NPN_12"   "P75NPN_13"   [289] "P75NPN_14"   "P75NPN_15"   "P75NPN_16"   [292] "p76n_1"      "p76st_2"     "p76n_3"      [295] "p76n_4"      "p76st_5"     "p76st_6"     [298] "p76st_7"     "p76n_8"      "p76n_9"      [301] "p76n_10"     "p76n_11"     "p76n_12"     [304] "p76n_13"     "p77n"        "p78n"        [307] "p79n"        "p80n"        "p81n_01"     [310] "p81n_02"     "p81n_03"     "p81n_04"     [313] "p81n_05"     "s1"          "s2"          [316] "s3"          "s4"          "s5npn"       [319] "s6npn_01"    "s6npn_02"    "s6npn_03"    [322] "s6npn_04"    "s6npn_05"    "s6npn_06"    [325] "s6npn_07"    "s6npn_08"    "s6npn_09"    [328] "s7npn"       "s8npn_a"     "s8npn_b"     [331] "s9npn"       "s10"         "s11_a"       [334] "s12"         "s13"         "s14"         [337] "s15"         "s16"         "s17"         [340] "s18mn_a"     "S18N_B_01"   "S18N_B_02"   [343] "S18N_B_03"   "S18N_B_04"   "S18N_B_05"   [346] "S18N_B_06"   "S18N_B_07"   "S18N_B_08"   [349] "S18N_B_09"   "S18N_B_10"   "S18N_B_11"   [352] "S18N_B_12"   "S18N_B_13"   "S18N_B_14"   [355] "S18N_B_15"   "S18N_B_16"   "S18N_B_17"   [358] "S18N_B_18"   "S18N_B_19"   "S18N_B_20"   [361] "S18N_B_21"   "s19m_01"     "s19m_02"     [364] "s19m_03"     "s19m_04"     "s19m_05"     [367] "s19m_06"     "s19m_07"     "s19m_08"     [370] "s19m_09"     "s19m_10"     "s20_a"       [373] "s20_b"       "s21"         "s22"         [376] "s22_a"       "s22_b"       "s22_c"       [379] "s23_a"       "s23_b"       "s24_a"       [382] "s24_b"       "s25"         "s26_a"       [385] "s26_b"       "s26_c"       "s26_d"       [388] "s26_e"       "s26_f"       "s26_g"       [391] "s26_h"       "s26_i"       "s26_j"       [394] "s26_k"       "s26_l"       "m_nc"        [397] "n_ni"        "s27"         "s28_a"       [400] "s28_b"       "s29"         "s30"         [403] "reeduc_1"    "reeduc_2"    "reedad"      [406] "perpart"     "fampart"     "wt"  
+```
+
+```{dim(latinobarometro2020)}
+```
+
+```         
+[1] 20204   408
+```
+
+Selección de Variables
+
+```{proc_data <- latinobarometro2020 %>% select(p13st_e, # Confianza en el Gobierno}
+                                            p13st_d, # Confianza en el congreso
+                                            p13st_f, # Confianza en el Poder Judicial
+                                            p13st_g,# Confianza en los partidos políticos
+                                            p13st_i, #Confianza en el presidente
+                                            p62st_b,# Elecciones
+                                            p72npn,# Nivel de desigualdades
+                                            P75NPN_11, #Acceso al poder
+                                            reeduc_1,# nivel educacional
+                                            sexo,# sexo
+                                            edad,# edad
+                                            idenpa) # pais 
+
+
+ # Comprobar
+> names(proc_data)
+ [1] "p13st_e"   "p13st_d"   "p13st_f"   "p13st_g"   "p13st_i"   "p62st_b"   "p72npn"   
+ [8] "P75NPN_11" "reeduc_1"  "sexo"      "edad"      "idenpa"   
+> sjlabelled::get_label(proc_data)
+                                                                          p13st_e 
+                                                                               "" 
+                                                                          p13st_d 
+                                                                               "" 
+                                                                          p13st_f 
+                                                                               "" 
+                                                                          p13st_g 
+                                                                               "" 
+                                                                          p13st_i 
+                                            "P13ST.I Confianza en: El presidente" 
+                                                                          p62st_b 
+"P62ST.B Las elecciones ofrecen a los votantes una real opción de elegir entre p" 
+                                                                           p72npn 
+           "P72NPN El nivel de desigualdad de su país es aceptable o inaceptable" 
+                                                                        P75NPN_11 
+"P75NPN_11 Peores expresiones de la desigualdad en su país: En el acceso al pode" 
+                                                                         reeduc_1 
+                                                                               "" 
+                                                                             sexo 
+                                                                               "" 
+                                                                             edad 
+                                                                               "" 
+                                                                           idenpa 
+                                                                               "" 
+```
+
+Filtracion por Pais
+
+```{proc_data <- proc_data %>% dplyr::filter(idenpa==152)}
+
+```
+
+# Recodificaciones
+
+```{proc_data$p13st_e <- recode(proc_data$p13st_e, "c(-2,-1)=NA")}
+proc_data$p13st_d <- recode(proc_data$p13st_d, "c(-2,-1)=NA")
+proc_data$p13st_f <- recode(proc_data$p13st_f, "c(-2,-1)=NA")
+proc_data$p13st_g <- recode(proc_data$p13st_g, "c(-2,-1)=NA")
+proc_data$p13st_i <- recode(proc_data$p13st_i, "c(-2,-1)=NA")
+proc_data$p62st_b <- recode(proc_data$p62st_b, "c(-5,-4,-3,-2,-1)=NA")
+proc_data$p72npn <- recode(proc_data$p72npn, "c(-5,-4,-3,-2,-1)=NA")
+```
+
+reordenar variables
+
+```{proc_data$p13st_e <- recode(proc_data$p13st_e, "1=3; 2=2; 3=1; 4=0")}
+proc_data$p13st_d <- recode(proc_data$p13st_d, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_f <- recode(proc_data$p13st_f, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_g <- recode(proc_data$p13st_g, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_i <- recode(proc_data$p13st_i, "1=3; 2=2; 3=1; 4=0")
+```
+
+Renombrar variables
+
+```{proc_data <- proc_data %>% rename("conf_gob"=p13st_e, # Confianza en el gobierno}
+                                  "conf_cong"=p13st_d, # Confianza en el congreso
+                                  "conf_jud"=p13st_f, # Confianza en el Poder Judicial
+                                  "conf_partpol"=p13st_g, # Confianza en los partidos políticos 
+                                  "conf_pres"=p13st_i, #Confianza en el presidente
+                                  "ofrec_elec"=p62st_b, #las elecciones ofrecen
+                                  "nivel_desi"=p72npn) #Niveles de desigualdad 
+
+```
+
+Referencias:
+
+Bargsted, Matías, Somma, Nicolás M., & Muñoz-Rojas, Benjamín. (2019). Participación electoral en Chile. Una aproximación de edad, período y cohorte. *Revista de ciencia política (Santiago)*, *39*(1), 75-98. <https://dx.doi.org/10.4067/S0718-090X2019000100075>

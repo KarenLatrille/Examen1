@@ -1,0 +1,4 @@
+[1,"==> quarto preview Examenqu.qmd --to html --no-watch-inputs --no-browse\n\n"]
+[1,"\nStarting python3 kernel..."]
+[1,"No se encontr� Python; ejecuta sin argumentos para instalar desde Microsoft Store o deshabilita este acceso directo en Configuraci�n > Administrar alias de ejecuci�n de la aplicaci�n.\r\n"]
+[1,"Unable to locate an installed version of Python 3.\nInstall Python 3 from https://www.python.org/downloads/\n\n"]

@@ -1,0 +1,677 @@
+---
+title: "Participación politica en Chile"
+author: "Karen Latrille"
+format: html
+editor: visual
+bibliography: Examen.bib
+link-citations: true
+---
+
+## Participación Politica en Chile
+
+En el Chile de hoy hay una desigualdad social que aun despues de la revuelta social del 18 de octubre del 2019 no logra superar, desde esta mirada, podemos sostener que esto provoca una multiplicidad de fenomenos de relevancia sociologica, que son directa consecuencia de la persepcion que se produce dentro de la poblacion que sufre de estas desigualdades de multiples formas mediante la experiencia de permanecer en chile, en donde el sexo, nivel educacional o inclusive posicion politica definira una postura frente al devenir nacional.
+
+Es en esta linea que desarrollaremos esta investigacion, la cual hace relación con las consecuencias de la desigualdad social, y por ende, falta de cohesion social real en el país, una directa disminución sostenida de la participación politica, y es con esta investigacion que con datos cuantitativos demostrar y comprender esta realidad en chile, en donde se demuestra que los niveles socioeconomicos, postura politica o incluso la edad puede llegar a influir en la particiapacion politica en su diversidad de manifestaciones.
+
+Esperamos entregar con este trabajo una imagen actual del chile contemporaneo, en donde existira hipotesis orientado a la edad, como lo mencionan Bargsted, Somma y Muñoz "Controlando por la cohorte de nacimiento, la participacion electoral seguira patron etario cuadratico: aumentara hasta cierto punto, a medida que las personas envejezcan, luego del cual comenzara a decrecer" ([@bargsted2019], lo cual solo servira de hipotesis inicial, ya que nuestro principal objetivo va de mano de poder manipular y comprender los porque de la baja participacion de los chilenos en actividades que se consideran politicas y de activismo activo.
+
+Para efectos de este trabajo, utilizaré datos obtenidos a través del Latinobarometro 2020, con el fin de observar como se comporta la percepcion de la política en Chile, desde las percepciones y opciones de los entrevistados al momento de dar sus distintas opiniones.
+
+## Analisis de Datos en R
+
+Ajustes iniciales:
+
+```{##Ajustes Iniciales}
+rm(list=ls())
+options(scipen=999)
+```
+
+Carga de Paquetes
+
+```{pacman::p_load(sjlabelled,}
+               dplyr, # Manipulacion de datos
+               stargazer, # Tablas
+               sjmisc, # Tablas
+               summarytools, # Tablas
+               kableExtra, # Tablas
+               sjPlot, # Tablas y gráficos
+               corrplot, # Correlaciones
+               sessioninfo, # Información de la sesión de trabajo
+               ggplot2, # Para la mayoría de los gráficos
+               GGally,
+               car,
+               texreg,
+               sjlabelled, 
+               fastDummies, 
+               ggeffects)
+```
+
+Carga de base de datos (1)
+
+```{#cargamos la base de datos desde internet}
+load(url("https://github.com/Kevin-carrasco/metod1-MCS/raw/main/files/data/external_data/latinobarometro2020.RData"))
+
+View(latinobarometro2020)
+names(latinobarometro2020)
+```
+
+```         
+ [1] "numinves"    "idenpa"      "numentre"   
+ [4] "reg"         "ciudad"      "tamciud"     
+ [7] "comdist"     "edad"        "sexo"         
+ [10] "codigo"      "diareal"     "mesreal"      
+ [13] "ini"         "fin"         "dura"        
+ [16] "totrevi"     "totcuot"     "totrech"      
+ [19] "totperd"     "numcasa"     "codsuper"    
+ [22] "supervvi"    "superven"    "codif"        
+ [25] "digit"       "p1st"        "p2st"         
+ [28] "p3stgbs"     "p4stgbs"     "p5stgbs"     
+ [31] "p6st"        "p7stgbs"     "p8st_a"       
+ [34] "p8st_b"      "p8st_c"      "p9stgbs"      
+ [37] "p10stgbs"    "P11STGBS_A"  "P11STGBS_B"   
+ [40] "p12st"       "P13STGBS_A"  "P13STGBS_B"   
+ [43] "p13st_c"     "p13st_d"     "p13st_e"      
+ [46] "p13st_f"     "p13st_g"     "p13st_h"      
+ [49] "p13st_i"     "p14gbs"      "p15st_a"      
+ [52] "p15st_b"     "p15st_c"     "p15st_d"      
+ [55] "p15st_e"     "p15st_f"     "p15st_g"      
+ [58] "p15n_h"      "p15n_i"      "p15n_j"       
+ [61] "p15n_k"      "P16N_A_01"   "P16N_A_02"    
+ [64] "P16N_A_03"   "P16N_A_04"   "P16N_A_05"    
+ [67] "P16N_A_06"   "P16N_A_07"   "P16N_A_08"   
+ [70] "P16N_A_09"   "P16N_A_10"   "P16N_A_11"   
+ [73] "P16N_A_12"   "P16N_A_13"   "P16N_A_14"    
+ [76] "P16N_A_15"   "P16N_A_16"   "P16N_B_01"   
+ [79] "P16N_B_02"   "P16N_B_03"   "P16N_B_04"    
+ [82] "P16N_B_05"   "P16N_B_06"   "P16N_B_07"    
+ [85] "P16N_B_08"   "P16N_B_09"   "P16N_B_10"    
+ [88] "P16N_B_11"   "P16N_B_12"   "P16N_B_13"    
+ [91] "P16N_B_14"   "P16N_B_15"   "P16N_B_16"    
+ [94] "p17stgbs"    "p18st"       "p19st_a"      
+ [97] "p19n_b"      "p19n_c"      "p19n_d"      
+ [100] "p20st_a"     "p22stm_b"    "p20stm_c"    
+ [103] "p20stm_d"    "p20st_e"     "p20st_f"     
+ [106] "p20st_g"     "p21stm"      "p22st_a"     
+ [109] "p22st_b"     "p22st_c"     "p22st_d"     
+ [112] "p23n_01"     "p23n_02"     "p23n_03"     
+ [115] "p23n_04"     "p23n_05"     "p23n_06"     
+ [118] "p23n_07"     "p23n_08"     "p23n_09"     
+ [121] "p23n_10"     "p24st_a"     "p24st_b"     
+ [124] "p24st_c"     "p25n"        "p26n_a"      
+ [127] "p26n_b"      "p27n"        "p28st"       [130] "p29st_a"     "p29st_b"     "p29st_c"     [133] "p29st_d"     "p29n_e"      "p29st_f"     [136] "p29st_g"     "p30st_a"     "p30st_b"     [139] "p30st_c"     "p30st_d"     "p30st_e"     [142] "p30n"        "p31st_a"     "p31st_b"     [145] "p31st_c"     "p31st_d"     "p31stm_e"    [148] "p32na"       "p32n_b"      "p33n"        [151] "p34n"        "p35n_a"      "p35n_b"      [154] "p36n_a"      "p36n_b"      "p36stm_a"    [157] "p36stm_b"    "p36stm_c"    "p36stm_d"    [160] "P36STMB_A"   "P36STMB_B"   "P36STMB_C"   [163] "P36STMB_D"   "p37n_a"      "p37n_b"      [166] "p37n_c"      "p37n_d"      "p38n"        [169] "p39n_a"      "p39st_b"     "p39n_c"      [172] "p39n_d"      "p39n_e"      "p39n_f"      [175] "p39n_g"      "p39n_h"      "p40n"        [178] "p41n"        "p42n"        "p43n"        [181] "p44n"        "p45n"        "p46stgbs"    [184] "p47st_a"     "p47st_b"     "p47st_c"     [187] "p47st_d"     "p47st_e"     "p47st_f"     [190] "p47st_g"     "p47st_h"     "p47st_i"     [193] "p47st_j"     "p47st_k"     "p47st_l"     [196] "p47st_m"     "p48st_1"     "p48st_2"     [199] "p48st_3"     "p49stgbs"    "P50STGBS_A"  [202] "P51STGBS_B"  "p52st"       "p53n"        [205] "p54st_a"     "p54st_b"     "p54st_c"     [208] "p54st_d"     "p55st_a"     "p55st_b"     [211] "p55st_c"     "p55st_d"     "p55st_e"     [214] "p55st_f"     "p56n"        "p57st"       [217] "p58st"       "p59st_a"     "p59st_b"     [220] "p59n_c"      "p59st_d"     "p59n_e"      [223] "p59n_f"      "p60st"       "p60n_b"      [226] "p60n_c"      "p61st"       "p62n_a"      [229] "p62st_b"     "p62st_c"     "p62st_d"     [232] "p63st_01"    "p63st_02"    "p63st_03"    [235] "p63st_04"    "p63st_05"    "p63st_06"    [238] "p63st_07"    "p63st_08"    "p63st_09"    [241] "p64st"       "p65st"       "p66npn"      [244] "p67npn_a"    "P67NPN_B_01" "P67NPN_B_02" [247] "P67NPN_B_03" "P67NPN_B_04" "P67NPN_B_05" [250] "P67NPN_B_06" "p68st"       "p69st"       [253] "p70st"       "P71STM_01"   "P71STM_02"   [256] "P71STM_03"   "P71STM_04"   "P71STM_05"   [259] "P71STM_06"   "P71STM_07"   "P71STM_08"   [262] "P71STM_09"   "P71STM_10"   "P71STM_11"   [265] "p72npn"      "p73npn_1"    "p73npn_2"    [268] "p73npn_3"    "p73npn_4"    "p73npn_5"    [271] "p74npn_1"    "p74npn_2"    "p74npn_3"    [274] "p74npn_4"    "p74npn_5"    "P75NPN_01"   [277] "P75NPN_02"   "P75NPN_03"   "P75NPN_04"   [280] "P75NPN_05"   "P75NPN_06"   "P75NPN_07"   [283] "P75NPN_08"   "P75NPN_09"   "P75NPN_10"   [286] "P75NPN_11"   "P75NPN_12"   "P75NPN_13"   [289] "P75NPN_14"   "P75NPN_15"   "P75NPN_16"   [292] "p76n_1"      "p76st_2"     "p76n_3"      [295] "p76n_4"      "p76st_5"     "p76st_6"     [298] "p76st_7"     "p76n_8"      "p76n_9"      [301] "p76n_10"     "p76n_11"     "p76n_12"     [304] "p76n_13"     "p77n"        "p78n"        [307] "p79n"        "p80n"        "p81n_01"     [310] "p81n_02"     "p81n_03"     "p81n_04"     [313] "p81n_05"     "s1"          "s2"          [316] "s3"          "s4"          "s5npn"       [319] "s6npn_01"    "s6npn_02"    "s6npn_03"    [322] "s6npn_04"    "s6npn_05"    "s6npn_06"    [325] "s6npn_07"    "s6npn_08"    "s6npn_09"    [328] "s7npn"       "s8npn_a"     "s8npn_b"     [331] "s9npn"       "s10"         "s11_a"       [334] "s12"         "s13"         "s14"         [337] "s15"         "s16"         "s17"         [340] "s18mn_a"     "S18N_B_01"   "S18N_B_02"   [343] "S18N_B_03"   "S18N_B_04"   "S18N_B_05"   [346] "S18N_B_06"   "S18N_B_07"   "S18N_B_08"   [349] "S18N_B_09"   "S18N_B_10"   "S18N_B_11"   [352] "S18N_B_12"   "S18N_B_13"   "S18N_B_14"   [355] "S18N_B_15"   "S18N_B_16"   "S18N_B_17"   [358] "S18N_B_18"   "S18N_B_19"   "S18N_B_20"   [361] "S18N_B_21"   "s19m_01"     "s19m_02"     [364] "s19m_03"     "s19m_04"     "s19m_05"     [367] "s19m_06"     "s19m_07"     "s19m_08"     [370] "s19m_09"     "s19m_10"     "s20_a"       [373] "s20_b"       "s21"         "s22"         [376] "s22_a"       "s22_b"       "s22_c"       [379] "s23_a"       "s23_b"       "s24_a"       [382] "s24_b"       "s25"         "s26_a"       [385] "s26_b"       "s26_c"       "s26_d"       [388] "s26_e"       "s26_f"       "s26_g"       [391] "s26_h"       "s26_i"       "s26_j"       [394] "s26_k"       "s26_l"       "m_nc"        [397] "n_ni"        "s27"         "s28_a"       [400] "s28_b"       "s29"         "s30"         [403] "reeduc_1"    "reeduc_2"    "reedad"      [406] "perpart"     "fampart"     "wt"  
+```
+
+```{dim(latinobarometro2020)}
+```
+
+```         
+[1] 20204   408
+```
+
+Selección de Variables
+
+```{proc_data <- latinobarometro2020 %>% select(p13st_e, # Confianza en el Gobierno}
+                                            p13st_d, # Confianza en el congreso
+                                            p13st_f, # Confianza en el Poder Judicial
+                                            p13st_g,# Confianza en los partidos políticos
+                                            p13st_i, #Confianza en el presidente
+                                            p62st_b,# Elecciones
+                                            p72npn,# Nivel de desigualdades
+                                            P75NPN_11, #Acceso al poder
+                                            reeduc_1,# nivel educacional
+                                            sexo,# sexo
+                                            edad,# edad
+                                            idenpa) # pais 
+
+
+ # Comprobar
+> names(proc_data)
+ [1] "p13st_e"   "p13st_d"   "p13st_f"   "p13st_g"   "p13st_i"   "p62st_b"   "p72npn"   
+ [8] "P75NPN_11" "reeduc_1"  "sexo"      "edad"      "idenpa"   
+> sjlabelled::get_label(proc_data)
+                                                                          p13st_e 
+                                                                               "" 
+                                                                          p13st_d 
+                                                                               "" 
+                                                                          p13st_f 
+                                                                               "" 
+                                                                          p13st_g 
+                                                                               "" 
+                                                                          p13st_i 
+                                            "P13ST.I Confianza en: El presidente" 
+                                                                          p62st_b 
+"P62ST.B Las elecciones ofrecen a los votantes una real opción de elegir entre p" 
+                                                                           p72npn 
+           "P72NPN El nivel de desigualdad de su país es aceptable o inaceptable" 
+                                                                        P75NPN_11 
+"P75NPN_11 Peores expresiones de la desigualdad en su país: En el acceso al pode" 
+                                                                         reeduc_1 
+                                                                               "" 
+                                                                             sexo 
+                                                                               "" 
+                                                                             edad 
+                                                                               "" 
+                                                                           idenpa 
+                                                                               "" 
+```
+
+Filtracion por Pais
+
+```{proc_data <- proc_data %>% dplyr::filter(idenpa==152)}
+
+```
+
+# Recodificaciones
+
+```{proc_data$p13st_e <- recode(proc_data$p13st_e, "c(-2,-1)=NA")}
+proc_data$p13st_d <- recode(proc_data$p13st_d, "c(-2,-1)=NA")
+proc_data$p13st_f <- recode(proc_data$p13st_f, "c(-2,-1)=NA")
+proc_data$p13st_g <- recode(proc_data$p13st_g, "c(-2,-1)=NA")
+proc_data$p13st_i <- recode(proc_data$p13st_i, "c(-2,-1)=NA")
+proc_data$p62st_b <- recode(proc_data$p62st_b, "c(-5,-4,-3,-2,-1)=NA")
+proc_data$p72npn <- recode(proc_data$p72npn, "c(-5,-4,-3,-2,-1)=NA")
+```
+
+reordenar variables
+
+```{proc_data$p13st_e <- recode(proc_data$p13st_e, "1=3; 2=2; 3=1; 4=0")}
+proc_data$p13st_d <- recode(proc_data$p13st_d, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_f <- recode(proc_data$p13st_f, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_g <- recode(proc_data$p13st_g, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_i <- recode(proc_data$p13st_i, "1=3; 2=2; 3=1; 4=0")
+```
+
+Renombrar variables
+
+```{proc_data <- proc_data %>% rename("conf_gob"=p13st_e, # Confianza en el gobierno}
+                                  "conf_cong"=p13st_d, # Confianza en el congreso
+                                  "conf_jud"=p13st_f, # Confianza en el Poder Judicial
+                                  "conf_partpol"=p13st_g, # Confianza en los partidos políticos 
+                                  "conf_pres"=p13st_i, #Confianza en el presidente
+                                  "ofrec_elec"=p62st_b, #las elecciones ofrecen
+                                  "nivel_desi"=p72npn) #Niveles de desigualdad 
+
+```
+
+Cambiar etiquetas
+
+```{proc_data$conf_gob <- set_label(x = proc_data$conf_gob,label = "Confianza: Gobierno")}
+get_label(proc_data$conf_gob)
+[1] "Confianza: Gobierno"
+ proc_data$conf_cong  <- set_label(x = proc_data$conf_cong, label = "Confianza: Congreso")
+ get_label(proc_data$conf_cong)
+[1] "Confianza: Congreso"
+ proc_data$conf_jud  <- set_label(x = proc_data$conf_jud, label = "Confianza: Poder judicial")
+ get_label(proc_data$conf_jud)
+[1] "Confianza: Poder judicial"
+ proc_data$conf_partpol  <- set_label(x = proc_data$conf_partpol, label = "Confianza: Partidos politicos")
+ get_label(proc_data$conf_partpol)
+[1] "Confianza: Partidos politicos"
+ proc_data$conf_pres  <- set_label(x = proc_data$conf_pres, label = "Confianza: Presidente")
+ get_label(proc_data$conf_pres)
+[1] "Confianza: Presidente"
+ proc_data$ofrec_elec  <- set_label(x = proc_data$ofrec_elec, label = "elecciones ofrecen")
+ get_label(proc_data$ofrec_elec)
+[1] "elecciones ofrecen"
+ proc_data$nivel_desi <- set_label(x = proc_data$nivel_desi, label = "Niveles de desigualdad")
+get_label(proc_data$nivel_desi)
+[1] "Niveles de desigualdad"
+```
+
+Suma de 5 variables de confianza
+
+```{proc_data$conf_inst <- (proc_data$conf_gob+proc_data$conf_cong+proc_data$conf_jud+proc_data$conf_partpol+proc_data$conf_pres)}
+summary(proc_data$conf_inst)
+
+```
+
+```         
+ Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's   
+ 0.000   0.000   2.000   3.065   5.000  15.000      45 
+```
+
+Educacion (descriptivo)
+
+```{frq(proc_data$reeduc_1)}
+```
+
+```         
+ <numeric>  
+ # total N=1200 valid N=1200 mean=5.05 sd=1.22 
+ Value |   N | Raw % | Valid % | Cum. % 
+ --------------------------------------    
+ 1 |   8 |  0.67 |    0.67 |   0.67     
+ 2 |  53 |  4.42 |    4.42 |   5.08     
+ 3 |  36 |  3.00 |    3.00 |   8.08     
+ 4 | 161 | 13.42 |   13.42 |  21.50     
+ 5 | 643 | 53.58 |   53.58 |  75.08     
+ 6 | 109 |  9.08 |    9.08 |  84.17     
+ 7 | 190 | 15.83 |   15.83 | 100.00 
+ <NA> |   0 |  0.00 |    <NA> |   <NA>
+```
+
+Recodificacion de variable nivel educacional
+
+-   Aca se determina recodificar en 4 grupos, siendo 1=analfabeto y 7=superior completa, quedando en 1= Analfabeto, 2= Educacion basica, 3= Educacion media, 4=Nivel superior
+
+```{proc_data$reeduc_1 <- car::recode(proc_data$reeduc_1, "c(1)=1; c(2,3)=2; c(4,5)=3; c(6,7)=4")}
+
+
+frq(proc_data$reeduc_1)
+```
+
+```         
+<numeric>  
+# total N=1200 valid N=1200 mean=3.16 sd=0.57 
+Value |   N | Raw % | Valid % | Cum. % 
+--------------------------------------    
+1 |   8 |  0.67 |    0.67 |   0.67     
+2 |  89 |  7.42 |    7.42 |   8.08     
+3 | 804 | 67.00 |   67.00 |  75.08     
+4 | 299 | 24.92 |   24.92 | 100.00  <NA> |   0 |  0.00 |    <NA> |   <NA>
+```
+
+Re-etiquetado y re-nombramiento
+
+```{proc_data$reeduc_1 <- factor(proc_data$reeduc_1,}
+                             labels = c(#Analfabeto", "Educacion basica", "Educacion media", "Educacion superior"),
+                             levels = c(1, 2, 3, 4))
+#renombramiento
+proc_data <- rename(proc_data,"educacion"=reeduc_1)
+
+get_label(proc_data$educacion)
+
+proc_data$educacion <- set_label(x = proc_data$educacion,label = "Educación")
+
+```
+
+SEXO
+
+-   Descriptivo
+
+```{frq(proc_data$sexo)}
+
+```
+
+```         
+<numeric>  
+# total N=1200 valid N=1200 mean=1.54 sd=0.50  
+Value |   N | Raw % | Valid % | Cum. % 
+--------------------------------------     
+1 | 555 | 46.25 |   46.25 |  46.25     
+2 | 645 | 53.75 |   53.75 | 100.00  
+<NA> |   0 |  0.00 |    <NA> |   <NA>
+```
+
+Recodificacion, etiquetado
+
+```{proc_data$sexo <- car::recode(proc_data$sexo, "1=0;2=1")}
+proc_data$sexo <- factor(proc_data$sexo,
+                         labels=c( "Hombre",
+                                   "Mujer"),
+                         levels=c(0,1))
+get_label(proc_data$sexo)
+proc_data$sexo <- set_label(x = proc_data$sexo,label = "Sexo")
+frq(proc_data$sexo)
+
+```
+
+```         
+<categorical> 
+# total N=1200 valid N=1200 mean=1.54 sd=0.50 
+Value  |   N | Raw % | Valid % | Cum. % 
+--------------------------------------- 
+Hombre | 555 | 46.25 |   46.25 |  46.25 
+Mujer  | 645 | 53.75 |   53.75 | 100.00 
+<NA>   |   0 |  0.00 |    <NA> |   <NA>
+```
+
+EDAD
+
+```{frq(proc_data$edad)}
+```
+
+```         
+x <numeric>  
+# total N=1200 valid N=1200 mean=44.49 sd=17.01  
+Value |  N | Raw % | Valid % | Cum. % 
+-------------------------------------    
+18 | 31 |  2.58 |    2.58 |   2.58    
+19 | 29 |  2.42 |    2.42 |   5.00    
+20 | 25 |  2.08 |    2.08 |   7.08    
+21 | 23 |  1.92 |    1.92 |   9.00    
+22 | 21 |  1.75 |    1.75 |  10.75    
+23 | 26 |  2.17 |    2.17 |  12.92    
+24 | 28 |  2.33 |    2.33 |  15.25    
+25 | 19 |  1.58 |    1.58 |  16.83    
+26 | 21 |  1.75 |    1.75 |  18.58    
+27 | 23 |  1.92 |    1.92 |  20.50    
+28 | 19 |  1.58 |    1.58 |  22.08    
+29 | 22 |  1.83 |    1.83 |  23.92    
+30 | 34 |  2.83 |    2.83 |  26.75    
+31 | 21 |  1.75 |    1.75 |  28.50    
+32 | 26 |  2.17 |    2.17 |  30.67    
+33 | 21 |  1.75 |    1.75 |  32.42    
+34 | 14 |  1.17 |    1.17 |  33.58    
+35 | 22 |  1.83 |    1.83 |  35.42    
+36 | 28 |  2.33 |    2.33 |  37.75    
+37 | 14 |  1.17 |    1.17 |  38.92    
+38 | 24 |  2.00 |    2.00 |  40.92    
+39 | 23 |  1.92 |    1.92 |  42.83    
+40 | 32 |  2.67 |    2.67 |  45.50    
+41 | 21 |  1.75 |    1.75 |  47.25    
+42 | 16 |  1.33 |    1.33 |  48.58    
+43 | 22 |  1.83 |    1.83 |  50.42    
+44 | 16 |  1.33 |    1.33 |  51.75    
+45 | 25 |  2.08 |    2.08 |  53.83    
+46 | 19 |  1.58 |    1.58 |  55.42    
+47 | 15 |  1.25 |    1.25 |  56.67    
+48 | 26 |  2.17 |    2.17 |  58.83    
+49 | 19 |  1.58 |    1.58 |  60.42    
+50 | 35 |  2.92 |    2.92 |  63.33    
+51 |  6 |  0.50 |    0.50 |  63.83    
+52 | 24 |  2.00 |    2.00 |  65.83    
+53 |  7 |  0.58 |    0.58 |  66.42    
+54 | 13 |  1.08 |    1.08 |  67.50    
+55 | 27 |  2.25 |    2.25 |  69.75    
+56 | 18 |  1.50 |    1.50 |  71.25    
+57 | 17 |  1.42 |    1.42 |  72.67    
+58 | 34 |  2.83 |    2.83 |  75.50    
+59 | 17 |  1.42 |    1.42 |  76.92    
+60 | 24 |  2.00 |    2.00 |  78.92    
+61 | 18 |  1.50 |    1.50 |  80.42    
+62 | 21 |  1.75 |    1.75 |  82.17    
+63 | 15 |  1.25 |    1.25 |  83.42    
+64 | 20 |  1.67 |    1.67 |  85.08    
+65 | 12 |  1.00 |    1.00 |  86.08    
+66 | 24 |  2.00 |    2.00 |  88.08    
+67 |  9 |  0.75 |    0.75 |  88.83    
+68 | 12 |  1.00 |    1.00 |  89.83    
+69 | 15 |  1.25 |    1.25 |  91.08    
+70 | 30 |  2.50 |    2.50 |  93.58    
+71 |  9 |  0.75 |    0.75 |  94.33    
+72 | 10 |  0.83 |    0.83 |  95.17    
+73 |  8 |  0.67 |    0.67 |  95.83    
+74 |  8 |  0.67 |    0.67 |  96.50    
+75 |  8 |  0.67 |    0.67 |  97.17    
+76 | 12 |  1.00 |    1.00 |  98.17    
+77 |  5 |  0.42 |    0.42 |  98.58    
+78 |  2 |  0.17 |    0.17 |  98.75    
+79 |  2 |  0.17 |    0.17 |  98.92    
+80 |  4 |  0.33 |    0.33 |  99.25    
+82 |  1 |  0.08 |    0.08 |  99.33    
+84 |  2 |  0.17 |    0.17 |  99.50    
+85 |  3 |  0.25 |    0.25 |  99.75    
+86 |  1 |  0.08 |    0.08 |  99.83    
+87 |  1 |  0.08 |    0.08 |  99.92    
+89 |  1 |  0.08 |    0.08 | 100.00  
+<NA> |  0 |  0.00 |    <NA> |   <NA>
+```
+
+cambio etiqueta
+
+```{get_label(proc_data$edad)}
+NULL
+proc_data$edad <- set_label(x = proc_data$edad,label = "Edad")
+
+```
+
+##Descriptivos##
+
+```{proc_data <-as.data.frame(proc_data)}
+stargazer(proc_data, type="text")
+```
+
+```         
+Statistic      N    Mean   St. Dev. Min Max ------------------------------------------- 
+conf_gob     1,181  0.660   0.800    0   3  
+conf_cong    1,178  0.594   0.714    0   3  
+conf_jud     1,186  0.717   0.789    0   3  
+conf_partpol 1,178  0.451   0.673    0   3  
+conf_pres     539   1.429   0.594    1   3  
+ofrec_elec   1,118  2.066   0.818    1   4  
+nivel_desi   1,179  2.395   1.789    1  10  
+P75NPN_11    1,200  0.284   0.504   -2   1  
+edad         1,200 44.491   17.008  18  89  
+idenpa       1,200 152.000  0.000   152 152 
+conf_inst    1,155  3.065   3.123    0  15  
+p13st_i       539   2.571   0.594    1   3 
+```
+
+TABLA DESCRIPTIVA
+
+![](Captura de pantalla 2024-07-02 015349.png){fig-align="center"}
+
+TABLAS DE CONTINGENCIA
+
+-   Variables categoricas
+
+    Educacion y sexo
+
+```{sjt.xtab(proc_data$educacion, proc_data$sexo,}
+         show.col.prc=TRUE,
+         show.summary=FALSE,
+         encoding = "UTF-8"
+)
+```
+
+![](Captura de pantalla 2024-07-02 123534.png)
+
+Se presenta este analisis, solo a modo ilustrativo de la muestra y sus componentes en el item educativo, siendo relevante develar que el 89.2% de las personas, tiene un estudio en la educacion superior. Lo cual en el desarrollo de los resultados puede ser un elemento a considerar
+
+TABLAS DE PROMEDIO
+
+-   Variable continua por una categórica
+
+```{proc_data %>% # se especifica la base de datos}
+  select(conf_inst,educacion) %>% # se seleccionan las variables
+  dplyr::group_by(Educación=sjlabelled::as_label(educacion)) %>% # se agrupan por la variable categórica y se usan sus etiquetas con as_label
+  dplyr::summarise(Obs.=n(),Promedio=mean(conf_inst),SD=sd(conf_inst)) %>% # se agregan las operaciones a presentar en la tabla
+  kable(., format = "markdown") # se genera la tabla
+
+```
+
+![](Captura de pantalla 2024-07-02 124239.png){fig-align="center"}
+
+```{graph <- ggplot(proc_data, aes(x =educacion, y = conf_inst)) +}
+  geom_boxplot() +
+  labs(x = "Educación", y = "Confianza en instituciones") +
+  theme_minimal()
+
+graph
+```
+
+![](Rplot.png)
+
+Aqui podemos ver como el nivel educativa y la confianza en instituciones si podria estar ligado estadistica en esta investigacion, ya que se observa alguna variacion dependiendo de los niveles educativos de la muestra.
+
+la cual es mas notoria cuando vemos datos de confianza en los partidos politcos:
+
+```{graph <- ggplot(proc_data, aes(x =educacion, y = conf_partpol)) +}
+  geom_boxplot() +
+  labs(x = "Educación", y = "Confianza en partidos politicos") +
+  theme_minimal()
+
+graph
+
+
+```
+
+![](Rplot01.png)
+
+Si bien no son diferencias significativas, igual existe la observacion de que segun tu nivel educativo mas alto, suele mejorar la opinion sobre las instituciones o el poder politico.
+
+-   Confianza en instituciones politicas de modo general:
+
+    ```{graph2 <- sjPlot::plot_stackfrq(dplyr::select(proc_data, conf_gob,}
+                                                  conf_cong,
+                                                  conf_jud,
+                                                  conf_partpol),
+                                    title = "Confianza en instituciones políticas") +
+      theme(legend.position="bottom")
+
+    graph2
+
+    ```
+
+![](Rplot02.png)
+
+0= ninguna y 3= mucha.
+
+\*\* Por sexo no existe real diferencia:
+
+```{graph3 <- proc_data %>% ggplot(aes(x = conf_inst, fill = sexo)) +}
+  geom_bar() +
+  xlab("Confianza en instituciones") +
+  ylab("Cantidad") + 
+  labs(fill="Sexo")+
+  scale_fill_discrete(labels = c('Hombre','Mujer'))
+
+graph3
+
+```
+
+![](Rplot03.png)
+
+-   Variables continuas como la edad, sirven para conocer rangos etarios y su representacion en la muestra total:
+
+![](Rplot04.png){fig-align="center"}
+
+Si agrupamos por rangos etarios nos daria lo siguiente:
+
+```{summary(proc_data$edad)}
+proc_data <- proc_data %>% 
+  mutate(edad_groups = case_when(edad >=18 & edad<=25 ~ "Entre 18 y 25 años",
+                                 edad >=26 & edad<=39 ~ "Entre 26 y 39 años",
+                                 edad >=40 & edad<=65 ~ "Entre 40 y 65 años",
+                                 edad >65 ~ "Más de 65 años"))
+
+table(proc_data$edad_groups)
+```
+
+![](Captura de pantalla 2024-07-02 131929.png){fig-align="center"}
+
+\*\* MATRICES DE CORRELACIONES
+
+```{load(url("https://github.com/Kevin-carrasco/metod1-MCS/raw/main/files/data/external_data/latinobarometro2020.RData"))}
+View(latinobarometro2020)
+names(latinobarometro2020)
+
+
+pacman::p_load(dplyr, # Manipulacion datos
+               sjmisc, # Descriptivos
+               sjPlot, # Tablas
+               sjlabelled, #etiquetas
+               kableExtra, #Tablas
+               GGally, # Correlaciones
+               corrplot) # Correlaciones
+
+options(scipen = 999) # para desactivar notacion cientifica
+
+
+# seleccion de variables 
+dim(latinobarometro2020) # Dimensiones
+
+proc_lati <- latinobarometro2020 %>% select(edad=edad, conf_gob=p13st_e, conf_cong=p13st_d, conf_jud=p13st_f, confi_part=p13st_g, sexo=sexo, nivel=reeduc_1)
+sjmisc::descr(proc_lati,
+              show = c("label","range", "mean", "sd", "NA.prc", "n")) %>%
+  kable(.,"markdown")
+
+```
+
+-\> estadistico descriptivos
+
+```{|   |var        |label      |     n| NA.prc|      mean|         sd|range       |}
+
+|5  |edad       |edad       | 20204|      0| 40.998515| 16.5383434|84 (16-100) |
+|2  |conf_gob   |conf_gob   | 20204|      0|  2.936003|  1.1804528|6 (-2-4)    |
+|1  |conf_cong  |conf_cong  | 20204|      0|  3.002524|  1.2211907|6 (-2-4)    |
+|3  |conf_jud   |conf_jud   | 20204|      0|  2.903831|  1.2114908|6 (-2-4)    |
+|4  |confi_part |confi_part | 20204|      0|  3.268858|  1.0991883|6 (-2-4)    |
+|7  |sexo       |sexo       | 20204|      0|  1.521530|  0.4995486|1 (1-2)     |
+|6  |nivel      |nivel      | 20204|      0|  4.291675|  1.7669237|7 (0-7)     
+```
+
+## MATRICES DE CORRELACIONES
+
+```{M <- cor(proc_lati, use = "complete.obs")}
+M
+```
+
+```         
+                  edad     conf_gob   conf_cong    conf_jud 
+  edad        1.00000000 -0.093030589 -0.04143066 -0.01078313 
+  conf_gob   -0.09303059  1.000000000  0.51103446  0.52732270 
+  conf_cong  -0.04143066  0.511034456  1.00000000  0.52295538 
+  conf_jud   -0.01078313  0.527322703  0.52295538  1.00000000 
+  confi_part -0.02149926  0.486478073  0.48753110  0.50493106 
+  sexo       -0.03514655 -0.007190216 -0.04443087 -0.02393642 
+  nivel      -0.22601050  0.126940823  0.10917166  0.09905302                     ---------------confi_part         sexo       nivel 
+  edad       -0.021499263 -0.035146547 -0.22601050 
+  conf_gob    0.486478073 -0.007190216  0.12694082 
+  conf_cong   0.487531096 -0.044430867  0.10917166 
+  conf_jud    0.504931060 -0.023936422  0.09905302 
+  confi_part  1.000000000 -0.006756531  0.08052474 
+  sexo       -0.006756531  1.000000000 -0.01196574 
+  nivel       0.080524744 -0.011965736  1.00000000
+```
+
+```{sjPlot::tab_corr(proc_lati,}
+                 triangle = "lower")
+
+
+```
+
+![](Captura de pantalla 2024-07-02 144506.png)
+
+```{corrplot.mixed(M)}
+
+```
+
+![](Rplot05.png)
+
+Mediante el analisis de la correlación de las variables utilizadas, podemos establecer que la mayor correlacion estan respecto a la relacion entre confianzas hacia congreso, poder judicial, partidos politicos, en donde existe en promedio un 0.5 de reaccion al cambio de una u otra variable del listado estudiado, por el otro lafo, segun sexo y niveles educacionales no se pueden establecer directa relacion con la perspectiva de las personas consultadas sobre las confianza a las instituciones. Lo cual podemos analizar desde una generalizacion de opinion negativa sobre la confianza que la ciudadania le entrega a estas instituciones.
+
+## Regresiones
+
+-   Recodificacion de variable nivel educativo, en 4 niveles, analfabeto, educacion, basica, educacion media, educacion superior.
+
+    ```{proc_lati$nivel <- car::recode(proc_lati$nivel,"c(1)=0; c(2,3)=1; c(4,5)=2; c(6,7)=3")}
+
+    proc_lati$nivel <- set_labels(proc_lati$nivel,
+                                      labels=c( "Analfabeto"=0,
+                                                "Educacion básica"=1,
+                                                "Educación media"=2,
+                                                "Educación superior"=3))
+
+    frq(proc_lati$nivel)
+    ```
+
+```         
+x <numeric>  
+# total N=20204 valid N=20204 mean=1.81 sd=0.88  
+Value |              Label |    N | Raw % | Valid % | Cum. % ------------------------------------------------------------     
+    0|          Analfabeto | 1458 |  7.22 |    7.22 |   7.22
+    1|    Educacion básica | 5686 | 28.14 |   28.14 |  35.36     
+    2|     Educación media | 8290 | 41.03 |   41.03 |  76.39     
+    3|  Educación superior | 4770 | 23.61 |   23.61 | 100.00  
+<NA> |                <NA> |    0 |  0.00 |    <NA> |   <NA>
+```
+
+```{proc_lati$nivel <- as_factor(proc_lati$nivel)}
+proc_lati$sexo <- as_factor(proc_lati$sexo)
+
+proc_lati <- na.omit(proc_lati)
+
+reg1 <- lm(confi_part ~ 1, data=proc_lati)
+
+stargazer(reg1, type="text")
+```
+
+![](Captura de pantalla 2024-07-02 171617.png){fig-align="center"}
+
+Siendo segun este modelo, la media de la confianza a los partidos politicos, de 3.269.
+
+REFERENCIAS
+
+Bargsted, Matías, Somma, Nicolás M., & Muñoz-Rojas, Benjamín. (2019). Participación electoral en Chile. Una aproximación de edad, período y cohorte. *Revista de ciencia política (Santiago)*, *39*(1), 75-98. <https://dx.doi.org/10.4067/S0718-090X2019000100075>

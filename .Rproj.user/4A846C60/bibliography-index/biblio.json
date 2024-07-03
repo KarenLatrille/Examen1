@@ -1,0 +1,87 @@
+{
+    "sources": [
+        {
+            "DOI": "10.4067/S0718-090X2019000100075",
+            "ISSN": "0718-090X",
+            "accessed": {
+                "date-parts": [
+                    [
+                        2024,
+                        7,
+                        2
+                    ]
+                ]
+            },
+            "author": [
+                {
+                    "family": "Bargsted",
+                    "given": "Matías"
+                },
+                {
+                    "family": "Somma",
+                    "given": "Nicolás M."
+                },
+                {
+                    "family": "Muñoz-Rojas",
+                    "given": "Benjamín"
+                }
+            ],
+            "container-title": "Revista de ciencia política (Santiago)",
+            "id": "bargstedParticipacionElectoralChile2019",
+            "issue": "1",
+            "issued": {
+                "date-parts": [
+                    [
+                        2019,
+                        4
+                    ]
+                ]
+            },
+            "language": "en-US",
+            "page": "75-98",
+            "title": "Participación electoral en Chile. Una aproximación de edad, período y cohorte",
+            "type": "article-journal",
+            "volume": "39"
+        },
+        {
+            "DOI": "10.1017/S0022381608080651",
+            "ISSN": "0022-3816, 1468-2508",
+            "accessed": {
+                "date-parts": [
+                    [
+                        2024,
+                        7,
+                        2
+                    ]
+                ]
+            },
+            "author": [
+                {
+                    "family": "Kam",
+                    "given": "Cindy D."
+                },
+                {
+                    "family": "Palmer",
+                    "given": "Carl L."
+                }
+            ],
+            "container-title": "The Journal of Politics",
+            "id": "kamReconsideringEffectsEducation2008",
+            "issue": "3",
+            "issued": {
+                "date-parts": [
+                    [
+                        2008,
+                        7
+                    ]
+                ]
+            },
+            "language": "en-US",
+            "page": "612-631",
+            "title": "Reconsidering the Effects of Education on Political Participation",
+            "type": "article-journal",
+            "volume": "70"
+        }
+    ],
+    "project_biblios": []
+}
